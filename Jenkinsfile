@@ -1,42 +1,19 @@
-pipeline {
-    agent any
+name: Java CI
 
-    stages {
+on: [push]
 
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/example/mfa-system.git'
-            }
-        }
+jobs:
+  build:
 
-        stage('Build') {
-            steps {
-                bat 'mvn clean compile'
-            }
-        }
+    runs-on: ubuntu-latest
 
-        stage('Test') {
-            steps {
-                bat 'mvn test'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                bat 'mvn package'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                bat 'docker build -t mfa-service .'
-            }
-        }
-
-        stage('Run Container') {
-            steps {
-                bat 'docker run -d -p 8080:8080 mfa-service'
-            }
-        }
-    }
-}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+    - name: Build with Gradle
+      run: ./gradlew build
+    - name: Run JUnit Tests
+      run: ./gradlew test

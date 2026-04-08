@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mfa-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mfa-app
+  template:
+    metadata:
+      labels:
+        app: mfa-app
+    spec:
+      containers:
+      - name: mfa-container
+        image: mfa-service:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfa-service
+spec:
+  selector:
+    app: mfa-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
