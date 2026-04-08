@@ -1,19 +1,46 @@
-name: Java CI
+pipeline {
+    agent any
 
-on: [push]
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clone your GitHub repo
+                git 'https://github.com/ragula2023a-hub/multi-factor-authentication-system.git'
+            }
+        }
 
-jobs:
-  build:
+        stage('Build') {
+            steps {
+                // Build using Maven
+                sh 'mvn clean package'
+            }
+        }
 
-    runs-on: ubuntu-latest
+        stage('Test') {
+            steps {
+                // Run JUnit tests
+                sh 'mvn test'
+            }
+        }
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-    - name: Build with Gradle
-      run: ./gradlew build
-    - name: Run JUnit Tests
-      run: ./gradlew test
+        stage('Docker Build') {
+            steps {
+                // Build Docker image
+                sh 'docker build -t mfa-service .'
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                // Run Docker container
+                sh 'docker run -d -p 8080:8080 mfa-service'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished'
+        }
+    }
+}
