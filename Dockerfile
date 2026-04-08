@@ -1,6 +1,14 @@
-# Use OpenJDK 17
-FROM openjdk:17-jdk-slim
+# Use official OpenJDK 17 (Debian-based)
+FROM eclipse-temurin:17-jdk
+
+# Set working directory
 WORKDIR /app
-COPY build/libs/mfa-service.jar mfa-service.jar
+
+# Copy the JAR file built by Maven
+COPY target/multi-factor-authentication-system-1.0-SNAPSHOT.jar app.jar
+
+# Expose port 8080
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "mfa-service.jar"]
+
+# Run the app
+ENTRYPOINT ["java", "-jar", "app.jar"]
